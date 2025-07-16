@@ -1,0 +1,24 @@
+server:
+  port: "8080"
+  host: "0.0.0.0"
+  read_timeout: "10s"
+  write_timeout: "10s"
+  shutdown_timeout: "30s"
+
+database:
+  host: "localhost"
+  port: 5432
+  username: "user"
+  password: "password"
+  db_name: "myapp"
+  ssl_mode: "disable"
+
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+
+app:
+  environment: "development"
+
