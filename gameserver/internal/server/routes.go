@@ -6,14 +6,16 @@ import (
 	"reverie.town/internal/handlers"
 )
 
-func SetupRoutes() *http.ServeMux {
-
+func SetupRoutes(db *sqlx.DB) *http.ServeMux {
 	r := http.NewServeMux()
 
-	//r.HandleFunc("GET /users")
+	// Initialize dependency chain
+	userRepo := repository.NewUserRepository(db)
+	userService := services.NewUserService(userRepo)
+	userHandler := handlers.NewuserHandler(userService)
 
-	//r.Handle("GET /user/{id}", )
-
+	// Register routes
+	r.HandleFunc("GET /users", userHandler.GetUsers)
 	r.HandleFunc("GET /wschat", handlers.ChatHandler)
 
 	return r
