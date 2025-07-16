@@ -8,8 +8,6 @@ import (
 
 func SetupRoutes() *http.ServeMux {
 
-	//userRepo:=repository.NewUserRepository()
-
 	r := http.NewServeMux()
 
 	//r.HandleFunc("GET /users")
