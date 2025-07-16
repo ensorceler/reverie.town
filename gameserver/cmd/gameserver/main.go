@@ -1,13 +1,20 @@
 package main
 
 import (
+	"context"
+	"database/sqlx"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
+	"time"
 
 	"reverie.town/internal/config"
 	"reverie.town/internal/server"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
