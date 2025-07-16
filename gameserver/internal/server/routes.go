@@ -12,13 +12,17 @@ import (
 func SetupRoutes(db *sqlx.DB) *http.ServeMux {
 	r := http.NewServeMux()
 
-	// Initialize dependency chain
-	userRepo := repository.NewUserRepository(db)
-	userService := services.NewUserService(userRepo)
-	userHandler := handlers.NewuserHandler(userService)
+	// Initialize user handler chain
+	userHandler := handlers.NewuserHandler(
+		services.NewUserService(
+			repository.NewUserRepository(db),
+		)
 
-	// Register routes
+	// Register API routes
 	r.HandleFunc("GET /users", userHandler.GetUsers)
+	r.HandleFunc("GET /users/{id}", userHandler.GetUserByID)  // Add this if implemented
+	
+	// Register WebSocket route
 	r.HandleFunc("GET /wschat", handlers.ChatHandler)
 
 	return r
