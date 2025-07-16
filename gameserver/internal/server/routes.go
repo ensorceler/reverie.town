@@ -3,7 +3,10 @@ package server
 import (
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
 	"reverie.town/internal/handlers"
+	"reverie.town/internal/repository"
+	"reverie.town/internal/services"
 )
 
 func SetupRoutes(db *sqlx.DB) *http.ServeMux {
