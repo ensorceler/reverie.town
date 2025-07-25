@@ -8,7 +8,7 @@ import (
 )
 
 type UserHandler interface {
-	GetUsers(w http.ResponseWriter, r *http.Request) func(http.ResponseWriter, *http.Request)
+	GetUsers(w http.ResponseWriter, r *http.Request)
 }
 
 type userHandler struct {
@@ -19,9 +19,7 @@ func NewuserHandler(us services.UserService) UserHandler {
 	return &userHandler{userService: us}
 }
 
-func (uH *userHandler) GetUsers(writer http.ResponseWriter, req *http.Request) func(http.ResponseWriter, *http.Request) {
+func (uH *userHandler) GetUsers(w http.ResponseWriter, req *http.Request) {
 	slog.Info("Get Users =>")
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("users"))
-	}
+	w.Write([]byte("users"))
 }

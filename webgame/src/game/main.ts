@@ -1,4 +1,3 @@
-import { MainMenu } from './scenes/MainMenu';
 import { AUTO, Game } from 'phaser';
 import { MainScene } from './scenes/MainScene';
 
@@ -6,8 +5,8 @@ import { MainScene } from './scenes/MainScene';
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1440,
-    height: 1440,
+    width: 1024,
+    height: 900,
     parent: 'game-container',
     backgroundColor: '#000',
     physics: {

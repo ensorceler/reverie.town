@@ -25,6 +25,12 @@ export default defineConfig({
         tailwindcss(),
         phasermsg()
     ],
+    // {shadcn alias @}
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "../src"),
+        }
+    },
     logLevel: 'warning',
     build: {
         rollupOptions: {

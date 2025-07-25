@@ -1,5 +1,6 @@
 import { GameObjects, Scene } from 'phaser';
 import { Player } from '../player/Player';
+import { EventBus } from '../EventBus';
 
 const minZoom = 0.25
 const maxZoom = 3
@@ -49,6 +50,8 @@ export class MainScene extends Scene {
         this.load.image("12_Kitchen_Shadowless_32x32", "assets/tiles/moderninteriors-win/1_Interiors/32x32/Theme_Sorter_Shadowless_32x32/12_Kitchen_Shadowless_32x32.png");
 
         this.load.image("animated_door_vertical_right_1_32x32", "assets/tiles/moderninteriors-win/3_Animated_objects/32x32/spritesheets/animated_door_vertical_right_1_32x32.png");
+
+
 
         // Load your JSON tilemap
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/lobby_scene.json');
@@ -201,6 +204,25 @@ export class MainScene extends Scene {
             if (obj.name === "StartingPoint" && this.player) {
                 this.player.updatePlayerPosition(obj.x!, obj.y!)
             }
+            if (obj.name === "FinishPosition" && this.player) {
+                //this.player.updatePlayerPosition(obj.x!, obj.y!)
+
+                const centerX = obj.x! + (obj.width || 0) / 2;
+                const centerY = obj.y! + (obj.height || 0) / 2;
+
+                this.matter.add.rectangle(
+                    centerX,
+                    centerY,
+                    obj.width || 32,
+                    obj.height || 32,
+                    {
+                        isStatic: true,
+                        label: "playerFinish",
+                        isSensor: true,
+                    }
+                );
+                console.log(`Created rectangle ${obj.type} at (${centerX}, ${centerY}) size ${obj.width}x${obj.height}`);
+            }
         })
 
         this.depthZone();
@@ -223,6 +245,10 @@ export class MainScene extends Scene {
                     (bodyB.label === "Player-X" && bodyA.label === "zone");
 
 
+                const isCollisionWithFinishPosition =
+                    (bodyA.label === "Player-X" && bodyB.label === "playerFinish") ||
+                    (bodyB.label === "Player-X" && bodyA.label === "playerFinish");
+
                 if (isZoneCollisionWithPlayer) {
                     //const zoneBody = bodyA === this.player?.body ? bodyB : bodyA;
                     console.log("isZone Collision with player =>");
@@ -236,12 +262,17 @@ export class MainScene extends Scene {
                     })
                 }
 
+                if (isCollisionWithFinishPosition) {
+                    EventBus.emit("playerReachedFinish", "You reached the finish position!");
+                }
+
             });
         })
         this.matter.world.on('collisionend', (event: any) => {
             console.log("collision end event =L>", event)
 
         })
+
     }
 
 

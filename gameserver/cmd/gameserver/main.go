@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"database/sqlx"
 	"log/slog"
-	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -14,7 +12,9 @@ import (
 	"reverie.town/internal/config"
 	"reverie.town/internal/server"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
@@ -49,8 +49,25 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Simple ping check
+	if err := db.Ping(); err != nil {
+		slog.Error("Database ping failed - connection not working", err)
+		os.Exit(1)
+	}
+
+	slog.Info("Database connection established successfully")
+
+	amqpConn, amqpError := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	//failOnError(err, "Failed to connect to RabbitMQ")
+	if amqpError != nil {
+		slog.Error("amqp connection failed - connection not working", err)
+		os.Exit(1)
+	}
+
+	defer amqpConn.Close()
+
 	// create new server
-	s := server.CreateNewServer(cfg)
+	s := server.CreateNewServer(cfg, db, amqpConn)
 
 	go func() {
 		slog.Info("Gameserver is running at ", slog.Any("Address: ", s.Addr))

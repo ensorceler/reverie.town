@@ -8,9 +8,9 @@ server:
 database:
   host: "localhost"
   port: 5432
-  username: "user"
-  password: "password"
-  db_name: "myapp"
+  username: "postgres"
+  password: "mysecretpassword"
+  db_name: "postgres"
   ssl_mode: "disable"
 
 redis:
@@ -18,6 +18,13 @@ redis:
   port: 6379
   password: ""
   db: 0
+
+rabbitmq: 
+  host: "localhost"
+  port: "5672"
+  username: "guest"
+  password: "guest" 
+
 
 app:
   environment: "development"

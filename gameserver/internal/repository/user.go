@@ -7,9 +7,8 @@ import (
 	"reverie.town/internal/models"
 )
 
-// type UserRepository
+// interface UserRepository
 type UserRepository interface {
-	//db *sqlx.DB
 	GetAllUsers(ctx context.Context) ([]models.User, error)
 	GetUserByID(ctx context.Context, userID string) (models.User, error)
 }

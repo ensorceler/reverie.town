@@ -1,16 +1,16 @@
 package server
 
 import (
-	"fmt"
-	"log/slog"
 	"net/http"
 
+	"github.com/jmoiron/sqlx"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"reverie.town/internal/config"
 	"reverie.town/internal/middleware"
 )
 
-func CreateNewServer(cfg config.Config, db *sqlx.DB) *http.Server {
-	routes := SetupRoutes(db)
+func CreateNewServer(cfg config.Config, db *sqlx.DB, amqpConn *amqp.Connection) *http.Server {
+	routes := SetupRoutes(db, amqpConn)
 	loggedRoutes := middleware.LogRequest(routes)
 
 	return &http.Server{
@@ -19,12 +19,5 @@ func CreateNewServer(cfg config.Config, db *sqlx.DB) *http.Server {
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		WriteTimeout: cfg.Server.WriteTimeout,
 	}
-	//slog.Info(viper.Get("host"))
 
-	server := &http.Server{
-		Handler: loggedRoutes,
-		Addr:    fmt.Sprintf("%v:%v", host, port),
-	}
-
-	return server
 }
