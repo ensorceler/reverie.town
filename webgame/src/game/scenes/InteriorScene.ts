@@ -32,7 +32,6 @@ export class InteriorScene extends Phaser.Scene {
 
     create() {
 
-
         const map = this.make.tilemap({ key: this.mapKey, tileWidth: 32, tileHeight: 32 });
         this.map = map;
 
@@ -42,14 +41,14 @@ export class InteriorScene extends Phaser.Scene {
         console.log('Tile size:', map.tileWidth, '×', map.tileHeight, 'pixels');
 
         this.setupTileMapLayers();
+        // setup collision 
         this.setupCollisionObjects();
-        this.setupZoneObjects();
-
-
-        this.setupMapZoomControls();
-
+        // collision events 
         this.setupCollisionEvents();
-
+        // zone objects 
+        this.setupZoneObjects();
+        // map zoom controls with input
+        this.setupMapZoomControls();
 
         // create the player  
         this.player = new Player(this, 100, 100, "Player");

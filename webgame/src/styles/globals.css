@@ -50,7 +50,10 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
-
+    --theme-deep: #4e4e8f;
+    --theme-medium: #595998;
+    --theme-light: #846b98;
+    --theme-muted: #806a92;
 }
 
 .dark {
@@ -138,4 +141,174 @@
     body {
         @apply bg-black text-foreground font-condensed;
     }
+}
+
+
+.bg-theme-deep {
+    background-color: var(--theme-deep);
+}
+
+.bg-theme-medium {
+    background-color: var(--theme-medium);
+}
+
+.bg-theme-light {
+    background-color: var(--theme-light);
+}
+
+.bg-theme-muted {
+    background-color: var(--theme-muted);
+}
+
+.bg-theme-deep\/10 {
+    background-color: rgba(78, 78, 143, 0.1);
+}
+
+.bg-theme-deep\/20 {
+    background-color: rgba(78, 78, 143, 0.2);
+}
+
+.bg-theme-deep\/30 {
+    background-color: rgba(78, 78, 143, 0.3);
+}
+
+.bg-theme-deep\/50 {
+    background-color: rgba(78, 78, 143, 0.5);
+}
+
+.bg-theme-medium\/10 {
+    background-color: rgba(89, 89, 152, 0.1);
+}
+
+.bg-theme-medium\/20 {
+    background-color: rgba(89, 89, 152, 0.2);
+}
+
+.bg-theme-medium\/30 {
+    background-color: rgba(89, 89, 152, 0.3);
+}
+
+.bg-theme-medium\/50 {
+    background-color: rgba(89, 89, 152, 0.5);
+}
+
+.bg-theme-light\/10 {
+    background-color: rgba(132, 107, 152, 0.1);
+}
+
+.bg-theme-light\/20 {
+    background-color: rgba(132, 107, 152, 0.2);
+}
+
+.bg-theme-light\/30 {
+    background-color: rgba(132, 107, 152, 0.3);
+}
+
+.bg-theme-muted\/20 {
+    background-color: rgba(128, 106, 146, 0.2);
+}
+
+.bg-theme-muted\/30 {
+    background-color: rgba(128, 106, 146, 0.3);
+}
+
+.bg-theme-muted\/40 {
+    background-color: rgba(128, 106, 146, 0.4);
+}
+
+.border-theme-deep {
+    border-color: var(--theme-deep);
+}
+
+.border-theme-medium {
+    border-color: var(--theme-medium);
+}
+
+.border-theme-light {
+    border-color: var(--theme-light);
+}
+
+.border-theme-muted {
+    border-color: var(--theme-muted);
+}
+
+.border-theme-deep\/30 {
+    border-color: rgba(78, 78, 143, 0.3);
+}
+
+.border-theme-medium\/30 {
+    border-color: rgba(89, 89, 152, 0.3);
+}
+
+.border-theme-medium\/40 {
+    border-color: rgba(89, 89, 152, 0.4);
+}
+
+.border-theme-light\/30 {
+    border-color: rgba(132, 107, 152, 0.3);
+}
+
+.border-theme-light\/50 {
+    border-color: rgba(132, 107, 152, 0.5);
+}
+
+.border-theme-muted\/30 {
+    border-color: rgba(128, 106, 146, 0.3);
+}
+
+.border-theme-muted\/40 {
+    border-color: rgba(128, 106, 146, 0.4);
+}
+
+.text-theme-deep {
+    color: var(--theme-deep);
+}
+
+.text-theme-medium {
+    color: var(--theme-medium);
+}
+
+.text-theme-light {
+    color: var(--theme-light);
+}
+
+.text-theme-muted {
+    color: var(--theme-muted);
+}
+
+.gradient-theme-header {
+    background: linear-gradient(to right, rgba(78, 78, 143, 0.3), rgba(89, 89, 152, 0.2), rgba(78, 78, 143, 0.3));
+}
+
+.gradient-theme-button {
+    background: linear-gradient(to right, rgba(78, 78, 143, 0.5), rgba(89, 89, 152, 0.5));
+}
+
+.gradient-theme-count {
+    background: linear-gradient(to right, var(--theme-deep), var(--theme-medium));
+}
+
+.gradient-theme-silhouette {
+    background: linear-gradient(to bottom, rgba(78, 78, 143, 0.2), rgba(89, 89, 152, 0.3));
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }

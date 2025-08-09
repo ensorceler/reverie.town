@@ -25,7 +25,6 @@ export class RedRoomScene extends Phaser.Scene {
     create() {
 
         this.gameDataManager = new GameDataManager(this.game);
-
         const map = this.make.tilemap({ key: 'redroom_scene', tileWidth: 32, tileHeight: 32 });
         this.map = map;
 
@@ -47,7 +46,6 @@ export class RedRoomScene extends Phaser.Scene {
         this.handleCollision();
         this.handleZones();
         this.handleCollisionEvents();
-
 
 
 

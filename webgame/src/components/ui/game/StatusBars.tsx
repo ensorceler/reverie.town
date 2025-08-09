@@ -20,7 +20,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   gold = 0
 }) => {
   return (
-    <div className="absolute top-2 left-2 w-96 max-w-md max-h-[320px] bg-black/20 z-50 backdrop-blur-sm rounded-lg p-4 border border-white/10 ">
+    <div className="absolute top-2 left-2 w-80 z-50 max-w-md max-h-[320px] bg-black/20  backdrop-blur-sm rounded-lg p-2 border border-white/10 ">
       {/* Health Bar */}
       <ResourceBar
         current={health}
@@ -68,6 +68,8 @@ export const StatusBar: React.FC<StatusBarProps> = ({
 };
 
 
+
+// individual bars
 const ResourceBar = ({
   current,
   max,
@@ -75,7 +77,8 @@ const ResourceBar = ({
   icon,
   label,
   iconBg = '#4a5568',
-  showMax = true
+  showMax = true,
+  showPercent = false,
 }: any) => {
   const percentage = (current / max) * 100;
 
@@ -90,10 +93,10 @@ const ResourceBar = ({
   };
 
   return (
-    <div className="flex items-center gap-2 mb-3">
+    <div className="flex items-center gap-2 mb-2">
       {/* Icon Container */}
       <div
-        className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg relative flex-shrink-0"
+        className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg relative flex-shrink-0"
         style={{
           background: `linear-gradient(145deg, ${iconBg}, #2d3748)`,
           boxShadow: `0 2px 6px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.1)`
@@ -112,7 +115,7 @@ const ResourceBar = ({
       <div className="flex-1 relative">
         {/* Glassmorphism outer container */}
         <div
-          className="h-8 rounded-md relative overflow-hidden backdrop-blur-md"
+          className="h-7 rounded-md relative overflow-hidden backdrop-blur-md"
           style={{
             background: `
                 linear-gradient(135deg, 
@@ -278,18 +281,24 @@ const ResourceBar = ({
           </div>
 
           {/* Text overlay */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span
-              className="text-white font-bold text-xs px-1 py-0.5 rounded"
-              style={{
-                textShadow: '1px 1px 1px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.5)',
-                background: 'rgba(0,0,0,0.2)',
-                backdropFilter: 'blur(1px)'
-              }}
-            >
-              {showMax ? `${current.toLocaleString()} / ${max.toLocaleString()}` : current.toLocaleString()}
-            </span>
-          </div>
+          {
+            showPercent &&
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                className="text-white font-bold text-xs px-1 py-0.5 rounded"
+                style={{
+                  textShadow: '1px 1px 1px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.5)',
+                  background: 'rgba(0,0,0,0.2)',
+                  backdropFilter: 'blur(1px)'
+                }}
+              >
+                {showMax ? `${current.toLocaleString()} / ${max.toLocaleString()}` : current.toLocaleString()}
+              </span>
+            </div>
+
+          }
+
+
         </div>
 
         {/* Glassmorphism glow effect */}
