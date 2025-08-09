@@ -1,6 +1,8 @@
 package models
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+)
 
 type WsConnInfo struct {
 	Conn     *websocket.Conn
@@ -11,14 +13,26 @@ type WsConnInfo struct {
 type WebSocketMessageType string
 
 const (
-	TypeJoin       WebSocketMessageType = "join"
-	TypeMessage    WebSocketMessageType = "message"
-	TypeUserJoined WebSocketMessageType = "user_joined"
-	TypeUserLeft   WebSocketMessageType = "user_left"
+	TypeJoin               WebSocketMessageType = "join"
+	TypeMessage            WebSocketMessageType = "message"
+	TypeSendPlayerState    WebSocketMessageType = "sendPlayerState"
+	TypeReceivePlayerState WebSocketMessageType = "playerState"
+
+	TypeUserJoined WebSocketMessageType = "userJoined"
+	TypeUserLeft   WebSocketMessageType = "userLeft"
 	TypeError      WebSocketMessageType = "error"
 )
 
-type WebSocketMessage struct {
+// Reads the incoming message from the websocket connection
+type WsReadMessage struct {
+	//ID      string               `json:"id,omitempty"`   // Optional, used for tracking messages
+	Type        WebSocketMessageType `json:"type"`                  // Required
+	PlayerState PlayerStateData      `json:"playerState,omitempty"` // Optional
+	Message     string               `json:"message,omitempty"`     // Optional
+}
+
+// writes the outgoing message to the websocket connection
+type WsWriteMessage struct {
 	ID        string               `json:"id,omitempty"`        // Optional, used for tracking messages
 	Type      WebSocketMessageType `json:"type"`                // Required
 	Data      interface{}          `json:"data,omitempty"`      // Optional
@@ -29,54 +43,31 @@ type WebSocketMessage struct {
 }
 
 // used in rabbitmq exchange to publish information about the room
-type RoomBroadcastMessage struct {
-	Message   string `json:"message"`
-	RoomID    string `json:"room_id"`
-	Client    string `json:"client"`
-	Timestamp string `json:"timestamp"`
+type RMQRoomBroadcastMessage struct {
+	Message     string          `json:"message,omitempty"`
+	RoomID      string          `json:"roomID"`
+	Client      string          `json:"client"`
+	Timestamp   string          `json:"timestamp"`
+	PlayerState PlayerStateData `json:"playerState,omitempty"`
+	RoomPlayers []RoomPlayer    `json:"roomPlayers,omitempty"`
 }
 
-/*
-Example JSON Requests/Responses:
-
-// Join Room Request
-{
-  "type": "join",
-  "room": "game-lobby-1",
-  "sender": "player123"
+type PlayerStateData struct {
+	PlayerMoving          bool           `json:"playerMoving,omitempty"`
+	PlayerFacingDirection string         `json:"playerFacingDirection,omitempty"`
+	PlayerPosition        PlayerPosition `json:"playerPosition,omitempty"`
+	PlayerCurrentScene    string         `json:"playerCurrentScene,omitempty"`
 }
 
-// Join Room Success Response
-{
-  "type": "user_joined",
-  "message": "Welcome to game-lobby-1",
-  "room": "game-lobby-1",
-  "sender": "server",
-  "timestamp": "2023-11-15T14:30:00Z"
+type PlayerPosition struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
-// Chat Message
-{
-  "type": "message",
-  "message": "Hello everyone!",
-  "room": "game-lobby-1",
-  "sender": "player123",
-  "timestamp": "2023-11-15T14:31:22Z"
+type RoomPlayer struct {
+	ClientID    string          `json:"clientId" redis:"clientId"`
+	RoomID      string          `json:"roomId" redis:"roomId"`
+	JoinedAt    string          `json:"joinedAt" redis:"joinedAt"`
+	LastSeen    string          `json:"lastSeen" redis:"lastSeen"`
+	PlayerState PlayerStateData `json:"playerState" redis:"playerState"`
 }
-
-// Error Response
-{
-  "type": "error",
-  "message": "Room is full",
-  "timestamp": "2023-11-15T14:32:10Z"
-}
-
-// User Left Notification
-{
-  "type": "user_left",
-  "message": "player456 has left",
-  "room": "game-lobby-1",
-  "sender": "server",
-  "timestamp": "2023-11-15T14:35:00Z"
-}
-*/

@@ -10,6 +10,6 @@ export const PhaserGame = () => {
     }, []);
 
     return (
-        <div id="game-container" className="cursor-grab border-2 border-gray-700"></div>
+        <div id="game-container" className="cursor-grab overflow-hidden border-2 w-full h-full"></div>
     );
 };

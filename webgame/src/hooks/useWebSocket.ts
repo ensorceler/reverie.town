@@ -1,22 +1,9 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { useChatStore, ChatMessage, RoomCredentials } from '../stores/chatStore'
+import { PhaserEventBus } from '@/game/events/PhaserEventBus';
+import { UseWebSocketOptions, WebSocketMessage } from '@/@types/websocket';
 
 // WebSocket message types
-interface WebSocketMessage {
-  id?: string;
-  type: 'join' | 'message' | 'user_joined' | 'user_left' | 'error'
-  data?: any
-  message?: string
-  sender?: string
-  timestamp?: string
-  room?: string
-}
-
-interface UseWebSocketOptions {
-  wsUrl?: string
-  reconnectDelay?: number
-  maxReconnectAttempts?: number
-}
 
 export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   const {
@@ -61,6 +48,8 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
         setWebSocket(websocket)
         setConnectionState(true, false)
         setRoom(credentials.roomName, credentials)
+        localStorage.setItem('roomName', credentials.roomName);
+        localStorage.setItem('client', credentials.clientName);
         reconnectAttempts.current = 0
 
         // Send join room message
@@ -104,7 +93,7 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
   const handleIncomingMessage = useCallback((data: string) => {
     try {
       const wsMessage: WebSocketMessage = JSON.parse(data)
-      console.log('handleIncomingMessage:', wsMessage)
+      //console.log('handleIncomingMessage:', wsMessage)
       switch (wsMessage.type) {
         case 'message':
           if (wsMessage.message && wsMessage.sender) {
@@ -112,31 +101,28 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
               id: wsMessage.id!,
               sender: wsMessage.sender,
               message: wsMessage.message,
-              timestamp: new Date(wsMessage.timestamp!).toString() || new Date().toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
-              }),
+              timestamp: wsMessage.timestamp || "",
               isOwn: wsMessage.sender === roomCredentials?.clientName
             }
             addMessage(newMessage)
           }
           break
 
-        case 'user_joined':
-          if (wsMessage.sender) {
-            const joinMessage: ChatMessage = {
-              id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-              sender: 'System',
-              message: `${wsMessage.sender} joined the room`,
-              timestamp: new Date().toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
-              }),
-              isOwn: false
-            }
-            addMessage(joinMessage)
-          }
+        case 'userJoined':
+
+          PhaserEventBus.emit("userJoined", {
+            ...wsMessage
+          })
+
           break
+
+        case "playerState":
+
+          PhaserEventBus.emit("playerState", {
+            ...wsMessage
+          })
+
+          break;
 
         case 'user_left':
           if (wsMessage.sender) {
@@ -186,21 +172,6 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
 
       ws.send(JSON.stringify(wsMessage))
 
-      // Add message to local state immediately for better UX
-      /*
-      const newMessage: ChatMessage = {
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        sender: roomCredentials.clientName,
-        message: messageText.trim(),
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        isOwn: true
-      }
-        */
-      //addMessage(newMessage)
-
       return true
     } catch (error) {
       console.error('Failed to send message:', error)
@@ -231,6 +202,27 @@ export const useWebSocket = (options: UseWebSocketOptions = {}) => {
       disconnect()
     }
   }, [disconnect])
+
+  // In useWebSocket.ts, add this in the connectToRoom function or hook setup
+  useEffect(() => {
+    const handleSendPlayerState = (playerData: any) => {
+      if (ws && isConnected) {
+        const wsMessage = {
+          type: 'sendPlayerState',
+          playerState: {
+            ...playerData
+          }
+        };
+        ws.send(JSON.stringify(wsMessage));
+      }
+    };
+
+    PhaserEventBus.on('sendPlayerState', handleSendPlayerState);
+
+    return () => {
+      PhaserEventBus.removeListener('sendPlayerState', handleSendPlayerState);
+    };
+  }, [ws, isConnected])
 
   return {
     // Connection state

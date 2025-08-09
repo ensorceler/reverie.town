@@ -15,6 +15,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	amqp "github.com/rabbitmq/amqp091-go"
+	redis "github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -66,8 +67,26 @@ func main() {
 
 	defer amqpConn.Close()
 
+	// Initialize Redis connection
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     cfg.Redis.Host + ":" + strconv.Itoa(cfg.Redis.Port),
+		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
+	})
+
+	// Test Redis connection
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		slog.Error("Redis connection failed", err)
+		os.Exit(1)
+	}
+	defer rdb.Close()
+
+	slog.Info("Redis connection established successfully")
+
 	// create new server
-	s := server.CreateNewServer(cfg, db, amqpConn)
+	s := server.CreateNewServer(cfg, db, amqpConn, rdb)
 
 	go func() {
 		slog.Info("Gameserver is running at ", slog.Any("Address: ", s.Addr))

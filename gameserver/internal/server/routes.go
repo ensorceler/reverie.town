@@ -9,9 +9,10 @@ import (
 	"reverie.town/internal/services"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/redis/go-redis/v9"
 )
 
-func SetupRoutes(db *sqlx.DB, amqpConn *amqp.Connection) *http.ServeMux {
+func SetupRoutes(db *sqlx.DB, amqpConn *amqp.Connection, rdb *redis.Client) *http.ServeMux {
 	r := http.NewServeMux()
 
 	// Initialize dependency chain
@@ -19,7 +20,7 @@ func SetupRoutes(db *sqlx.DB, amqpConn *amqp.Connection) *http.ServeMux {
 	userService := services.NewUserService(userRepo)
 	userHandler := handlers.NewuserHandler(userService)
 
-	wsRepo := repository.NewWsRepository(db, amqpConn)
+	wsRepo := repository.NewWsRepository(db, amqpConn, rdb)
 	chatRoomService := services.NewChatRoomService(wsRepo)
 	wsHandler := handlers.NewWebsocketHandler(chatRoomService)
 

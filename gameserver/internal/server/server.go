@@ -5,12 +5,13 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/redis/go-redis/v9"
 	"reverie.town/internal/config"
 	"reverie.town/internal/middleware"
 )
 
-func CreateNewServer(cfg config.Config, db *sqlx.DB, amqpConn *amqp.Connection) *http.Server {
-	routes := SetupRoutes(db, amqpConn)
+func CreateNewServer(cfg config.Config, db *sqlx.DB, amqpConn *amqp.Connection, rdb *redis.Client) *http.Server {
+	routes := SetupRoutes(db, amqpConn, rdb)
 	loggedRoutes := middleware.LogRequest(routes)
 
 	return &http.Server{

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { EventBus } from "@/game/EventBus"
+import { PhaserEventBus } from "@/game/events/PhaserEventBus"
 import { useWebSocket } from "@/hooks/useWebSocket"
 import dayjs from "dayjs"
 // Mock chat messages
@@ -103,7 +103,7 @@ export function Chatboard() {
                     isOwn: true
                 }
                 setMessages([...messages, newMessage])
-                EventBus.emit("messageSent", newMessage)
+                //EventBus.emit("messageSent", newMessage)
             }
             setCurrentMessage("")
         }
@@ -122,15 +122,6 @@ export function Chatboard() {
         }
     }, [wsMessages])
 
-    useEffect(() => {
-        EventBus.on("playerReachedFinish", (msg: any) => {
-            console.log("Event received:", msg);
-        });
-
-        return () => {
-            EventBus.removeListener('playerReachedFinish');
-        }
-    }, [])
 
 
     return (
