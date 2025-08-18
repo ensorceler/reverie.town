@@ -1,26 +1,43 @@
 import { useState } from 'react';
-import { StatusBar } from './components/ui/game/StatusBars';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PhaserGame } from './PhaserGame';
-import { GameChatbox } from './components/ui/game';
+import { GameChatbox, PlayerStatusBar, RetroGameChat, StatusBar } from './components/ui/game';
 import { Homepage } from './components/Homepage';
-import GameInventorySystem from './components/ui/game/GameInventoryUI';
+import { BottomActionBar } from './components/ui/game/BottomActionBar';
+import TestPage from './components/TestPage';
 
-function App() {
-    const [currentView, setCurrentView] = useState<'homepage' | 'game'>('homepage');
-
-    if (currentView === 'homepage') {
-        /*
-        */
-        return <Homepage onEnterGame={() => setCurrentView("game")} />
-    }
-
+function GameView() {
     return (
         <div className="h-screen w-screen relative">
             <PhaserGame />
-            <StatusBar health={20} maxHealth={100} experience={40} maxExperience={100} mana={40} maxMana={100} gold={40} />
-            <GameChatbox />
-            <GameInventorySystem />
+            <RetroGameChat />
+            <PlayerStatusBar />
+            <BottomActionBar />
         </div>
+    );
+}
+
+function GameViewExample() {
+    return (
+        <div className="h-screen w-screen relative">
+            <PhaserGame />
+            <StatusBar />
+            <GameChatbox />
+        </div>
+    );
+}
+
+
+
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/test" element={<TestPage />} />
+                <Route path="/" element={<GameView />} />
+                <Route path="/example" element={<GameViewExample />} />
+            </Routes>
+        </Router>
     );
 }
 

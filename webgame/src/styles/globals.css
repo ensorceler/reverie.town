@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -54,6 +56,46 @@
     --theme-medium: #595998;
     --theme-light: #846b98;
     --theme-muted: #806a92;
+
+
+    /* Brown palette */
+    --brown-50: #f5f0e8;
+    --brown-100: #e8dcc8;
+    --brown-200: #d4c4a0;
+    --brown-300: #c4a882;
+    --brown-400: #b5a585;
+    --brown-500: #a0916b;
+    --brown-600: #8b7355;
+    --brown-700: #6b5635;
+    --brown-800: #5a4628;
+    --brown-900: #4a3618;
+    --brown-950: #3a2610;
+
+    /* Surface colors */
+    --surface-primary: var(--brown-600);
+    --surface-secondary: var(--brown-700);
+    --surface-inset: var(--brown-900);
+    --surface-raised: var(--brown-200);
+    --surface-text: #2a2a1a;
+    --surface-text-light: var(--brown-200);
+
+    /* Status colors */
+    --status-health: #dc2626;
+    --status-mana: #fbbf24;
+    --status-experience: #3b82f6;
+    --status-bg: var(--brown-950);
+
+    /* Chat colors */
+    --chat-service: #90EE90;
+    --chat-motd: #87CEEB;
+    --chat-message: #ffd700;
+    --chat-system: #a78bfa;
+    --chat-guild: #f472b6;
+
+    /* Interactive states */
+    --interactive-hover: #e0d4b0;
+    --interactive-active: var(--brown-400);
+    --interactive-disabled: var(--brown-800);
 }
 
 .dark {
@@ -131,6 +173,7 @@
 
     --font-condensed: "Fira Sans Condensed", sans-serif;
     --font-mario: 'MarioAndLuigi', sans-serif;
+    --font-pixel2P: "Press Start 2P", system-ui;
 }
 
 @layer base {
@@ -144,171 +187,88 @@
 }
 
 
-.bg-theme-deep {
-    background-color: var(--theme-deep);
+/* Utility classes */
+.retro-font {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
 }
 
-.bg-theme-medium {
-    background-color: var(--theme-medium);
+.surface-primary {
+    background: var(--surface-primary);
 }
 
-.bg-theme-light {
-    background-color: var(--theme-light);
+.surface-secondary {
+    background: var(--surface-secondary);
 }
 
-.bg-theme-muted {
-    background-color: var(--theme-muted);
+.surface-raised {
+    background: var(--surface-raised);
+    color: var(--surface-text);
 }
 
-.bg-theme-deep\/10 {
-    background-color: rgba(78, 78, 143, 0.1);
+.surface-inset {
+    background: var(--surface-inset);
 }
 
-.bg-theme-deep\/20 {
-    background-color: rgba(78, 78, 143, 0.2);
+.border-outset {
+    border: 2px outset var(--surface-primary);
 }
 
-.bg-theme-deep\/30 {
-    background-color: rgba(78, 78, 143, 0.3);
+.border-inset {
+    border: 2px inset var(--surface-primary);
 }
 
-.bg-theme-deep\/50 {
-    background-color: rgba(78, 78, 143, 0.5);
+.text-surface {
+    color: var(--surface-text);
 }
 
-.bg-theme-medium\/10 {
-    background-color: rgba(89, 89, 152, 0.1);
+.text-surface-light {
+    color: var(--surface-text-light);
 }
 
-.bg-theme-medium\/20 {
-    background-color: rgba(89, 89, 152, 0.2);
+.status-health {
+    background: var(--status-health);
 }
 
-.bg-theme-medium\/30 {
-    background-color: rgba(89, 89, 152, 0.3);
+.status-mana {
+    background: var(--status-mana);
 }
 
-.bg-theme-medium\/50 {
-    background-color: rgba(89, 89, 152, 0.5);
+.status-experience {
+    background: var(--status-experience);
 }
 
-.bg-theme-light\/10 {
-    background-color: rgba(132, 107, 152, 0.1);
+.status-bg {
+    background: var(--status-bg);
 }
 
-.bg-theme-light\/20 {
-    background-color: rgba(132, 107, 152, 0.2);
+.chat-service {
+    color: var(--chat-service);
 }
 
-.bg-theme-light\/30 {
-    background-color: rgba(132, 107, 152, 0.3);
+.chat-motd {
+    color: var(--chat-motd);
 }
 
-.bg-theme-muted\/20 {
-    background-color: rgba(128, 106, 146, 0.2);
+.chat-message {
+    color: var(--chat-message);
 }
 
-.bg-theme-muted\/30 {
-    background-color: rgba(128, 106, 146, 0.3);
+.chat-system {
+    color: var(--chat-system);
 }
 
-.bg-theme-muted\/40 {
-    background-color: rgba(128, 106, 146, 0.4);
+.chat-guild {
+    color: var(--chat-guild);
 }
 
-.border-theme-deep {
-    border-color: var(--theme-deep);
+.hover\\:surface-hover:hover {
+    background: var(--interactive-hover);
 }
 
-.border-theme-medium {
-    border-color: var(--theme-medium);
+.active\\:surface-active:active {
+    background: var(--interactive-active);
 }
 
-.border-theme-light {
-    border-color: var(--theme-light);
-}
-
-.border-theme-muted {
-    border-color: var(--theme-muted);
-}
-
-.border-theme-deep\/30 {
-    border-color: rgba(78, 78, 143, 0.3);
-}
-
-.border-theme-medium\/30 {
-    border-color: rgba(89, 89, 152, 0.3);
-}
-
-.border-theme-medium\/40 {
-    border-color: rgba(89, 89, 152, 0.4);
-}
-
-.border-theme-light\/30 {
-    border-color: rgba(132, 107, 152, 0.3);
-}
-
-.border-theme-light\/50 {
-    border-color: rgba(132, 107, 152, 0.5);
-}
-
-.border-theme-muted\/30 {
-    border-color: rgba(128, 106, 146, 0.3);
-}
-
-.border-theme-muted\/40 {
-    border-color: rgba(128, 106, 146, 0.4);
-}
-
-.text-theme-deep {
-    color: var(--theme-deep);
-}
-
-.text-theme-medium {
-    color: var(--theme-medium);
-}
-
-.text-theme-light {
-    color: var(--theme-light);
-}
-
-.text-theme-muted {
-    color: var(--theme-muted);
-}
-
-.gradient-theme-header {
-    background: linear-gradient(to right, rgba(78, 78, 143, 0.3), rgba(89, 89, 152, 0.2), rgba(78, 78, 143, 0.3));
-}
-
-.gradient-theme-button {
-    background: linear-gradient(to right, rgba(78, 78, 143, 0.5), rgba(89, 89, 152, 0.5));
-}
-
-.gradient-theme-count {
-    background: linear-gradient(to right, var(--theme-deep), var(--theme-medium));
-}
-
-.gradient-theme-silhouette {
-    background: linear-gradient(to bottom, rgba(78, 78, 143, 0.2), rgba(89, 89, 152, 0.3));
-}
-
-
-.custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
+/* Utility classes */

@@ -53,10 +53,17 @@ export class Preloader extends Scene {
 
         this.load.image("12_Kitchen_Shadowless_32x32", "assets/tiles/moderninteriors-win/1_Interiors/32x32/Theme_Sorter_Shadowless_32x32/12_Kitchen_Shadowless_32x32.png");
 
+        this.load.image("1_Terrains_and_Fences_32x32", "assets/tiles/modernexteriors-win/Modern_Exteriors_32x32/ME_Theme_Sorter_32x32/1_Terrains_and_Fences_32x32.png");
+        this.load.image("2_City_Terrains_32x32", "assets/tiles/modernexteriors-win/Modern_Exteriors_32x32/ME_Theme_Sorter_32x32/2_City_Terrains_32x32.png");
+        this.load.image("4_Generic_Buildings_32x32", "assets/tiles/modernexteriors-win/Modern_Exteriors_32x32/ME_Theme_Sorter_32x32/4_Generic_Buildings_32x32.png");
+        this.load.image("7_Villas_32x32", "assets/tiles/modernexteriors-win/Modern_Exteriors_32x32/ME_Theme_Sorter_32x32/7_Villas_32x32.png");
+        this.load.image("17_Garden_32x32", "assets/tiles/modernexteriors-win/Modern_Exteriors_32x32/ME_Theme_Sorter_32x32/17_Garden_32x32.png");
+
         // lobby scene
         this.load.tilemapTiledJSON('lobby_scene', 'assets/tilemaps/lobby_scene.json');
 
         this.load.tilemapTiledJSON('redroom_scene', 'assets/tilemaps/red_room.json');
+        this.load.tilemapTiledJSON('reverie_entry', 'assets/tilemaps/reverie_entry.json');
 
         this.load.tilemapTiledJSON('building_A_interior_A1', 'assets/tilemaps/building_A_interior_A1.json');
         this.load.tilemapTiledJSON('building_A_interior_A2', 'assets/tilemaps/building_A_interior_A2.json');
@@ -97,9 +104,17 @@ export class Preloader extends Scene {
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         //this.scene.start('RedRoomScene');
+
+        this.scene.start("exterior_scene", {
+            mapKey: "reverie_entry",
+            spawnKey: ""
+        })
+
+        /*
         this.scene.start("InteriorScene", {
             mapKey: "building_A_interior_A2",
             spawnKey: "entry_spawn"
         })
+            */
     }
 }

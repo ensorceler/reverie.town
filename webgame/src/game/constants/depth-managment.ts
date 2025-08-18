@@ -1,0 +1,9 @@
+
+
+export const DEPTH = {
+    "LAYER_DEPTH": 10,
+    "PLAYER_DEPTH": 20,
+    "NPC_DEPTH": 20,
+    "PLAYER_NAME_TAG_DEPTH": 50,
+    "FOREGROUND_LAYER_DEPTH": 30
+}

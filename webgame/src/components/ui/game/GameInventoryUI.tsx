@@ -65,7 +65,7 @@ const GameInventorySystem = () => {
 
             {/* Bottom Right Action Bar */}
             <div className="fixed bottom-6 right-6 flex items-center space-x-2 
-          bg-black/40 backdrop-blur-md rounded-md px-3 py-2
+          bg-black/10 backdrop-blur-md rounded-md px-3 py-2
           shadow-lg">
                 <button
                     onClick={() => setIsInventoryOpen(true)}

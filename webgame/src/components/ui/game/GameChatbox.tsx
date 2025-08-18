@@ -1,42 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
-import { Send, MessageCircle, X, Users, Settings, Globe, Shield } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import { ActionButton, SecondaryButton } from "./ActionButton";
 
 
-
+// Updated Retro Chat Component
 export const GameChatbox = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [message, setMessage] = useState('');
-    const [selectedChannel, setSelectedChannel] = useState('Global');
-    //const [backgroundColor, setBackgroundColor] = useState('bg-black');
+    const [activeTab, setActiveTab] = useState('General');
+    const [inputMessage, setInputMessage] = useState('');
     const [messages, setMessages] = useState([
-        { id: 1, type: 'system', text: 'Please be respectful and polite towards others. Offensive behavior is not tolerated.', timestamp: '14:30' },
-        { id: 2, type: 'system', text: 'Do not share any private information (email, phone number, address, passwords)!', timestamp: '14:30' },
-        { id: 3, type: 'global', user: 'MD.RR', text: 'war hero', subtext: 'how', timestamp: '14:32', level: '⚡' },
-        { id: 4, type: 'global', user: 'Yoshi', text: 'Did you guys hear about brawl stars?', timestamp: '14:33', level: '🛡️' },
-        { id: 5, type: 'global', user: 'Yoshi', text: 'It looks sick', timestamp: '14:33', level: '🛡️' },
-        { id: 6, type: 'global', user: 'Imran', text: 'Emerald Family', subtext: 'yoshi please join...', timestamp: '14:34', level: '👑' },
+        { type: 'chat-service', text: '[Service] Connecting to server...' },
+        { type: 'chat-service', text: '[Service] Connection successful.' },
+        { type: 'chat-service', text: '[Service] Joined server Europe 1' },
+        { type: 'chat-service chat-motd', text: '[Service] [MotD] Welcome to reverie (v0.3.25a) F.A.Q.' },
+        { type: 'chat-service', text: '[Service] Joined server Asia 1' },
+        { type: 'chat-message', text: '[Zone] IyanXstar: Anyruns' },
+        { type: 'chat-service', text: '[Service] Connection closed.' },
+        { type: 'chat-service', text: '[Service] Connecting to server...' },
+        { type: 'chat-service', text: '[Service] Connection successful.' },
+        { type: 'chat-service', text: '[Service] Joined server Europe 1' },
+        { type: 'chat-service chat-motd', text: '[Service] [MotD] Welcome to reverie.world (v0.3.25a) F.A.Q.' },
+        { type: 'chat-service', text: '[Service] Joined server Europe 1' },
+        { type: 'chat-message', text: '[Zone] HONEYBANANA: Nandito na pala yung OA' },
     ]);
 
     const messagesEndRef = useRef(null);
 
-    const channels = [
-        { name: 'Global', icon: Globe, color: 'text-blue-400' },
-        { name: 'Clan', icon: Shield, color: 'text-green-400' }
-    ];
-
-    const backgroundOptions = [
-        { name: 'Black', class: 'bg-black', preview: 'bg-black' },
-        { name: 'Dark Blue', class: 'bg-slate-900', preview: 'bg-slate-900' },
-        { name: 'Deep Purple', class: 'bg-purple-900', preview: 'bg-purple-900' },
-        { name: 'Forest Green', class: 'bg-green-900', preview: 'bg-green-900' },
-        { name: 'Dark Red', class: 'bg-red-900', preview: 'bg-red-900' },
-        { name: 'Ocean Blue', class: 'bg-blue-900', preview: 'bg-blue-900' },
-        { name: 'Gradient Purple', class: 'bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900', preview: 'bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900' },
-        { name: 'Gradient Green', class: 'bg-gradient-to-br from-green-900 via-teal-900 to-blue-900', preview: 'bg-gradient-to-br from-green-900 via-teal-900 to-blue-900' },
-    ];
-
     const scrollToBottom = () => {
-        (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' });
+        (messagesEndRef.current as any)?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
@@ -44,17 +34,13 @@ export const GameChatbox = () => {
     }, [messages]);
 
     const handleSendMessage = () => {
-        if (message.trim()) {
+        if (inputMessage.trim()) {
             const newMessage = {
-                id: messages.length + 1,
-                type: selectedChannel.toLowerCase(),
-                user: 'You',
-                text: message,
-                level: '⭐',
-                timestamp: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+                type: 'chat-message',
+                text: `[Zone (51)] Player: ${inputMessage}`
             };
-            setMessages([...messages, newMessage]);
-            setMessage('');
+            setMessages(prev => [...prev, newMessage]);
+            setInputMessage('');
         }
     };
 
@@ -64,179 +50,299 @@ export const GameChatbox = () => {
         }
     };
 
+    const handleTabClick = (tabName: string) => {
+        if (tabName === '⚙️') return;
+        setActiveTab(tabName);
+    };
+
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
         <>
-            {/* Compact chatbox (bottom-left) */}
-            {!isExpanded && (
-                <div className="absolute bottom-4 left-4 z-[60]">
-                    {/* Mini chat preview */}
-                    <div className="mb-3 w-80 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-2xl hover:bg-white/10 transition-all duration-300">
-                        <div className="space-y-2 max-h-24 overflow-hidden">
-                            {messages.slice(-3).map((msg) => (
-                                <div key={msg.id} className="text-xs">
-                                    {msg.type === 'system' ? (
-                                        <div className="text-yellow-400 font-medium">
-                                            ⚠️ {msg.text}
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-start gap-2">
-                                            <span className="text-gray-400 w-8 flex-shrink-0">{msg.timestamp}</span>
-                                            <div className="text-white">
-                                                <span className="text-orange-400 font-semibold">{msg.user}</span>
-                                                <span className="text-gray-200">: {msg.text}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+            {!isExpanded ? (
+                // Compact Chat
+                <div className="min-w-80 z-20 max-w-sm mx-auto absolute bottom-0 left-0">
+
+                    {/** top action bar */}
+                    <div className="flex mb-2 ml-2"> <button className="w-10 h-10 mr-1 bg-[#121313] border-2 border-[#363737]  flex items-center justify-center retro-font cursor-pointer"
+                        onClick={toggleExpanded}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="-5.0 -10.0 110.0 135.0" height="32" width="32" fill="#fff">
+                            <path d="m17 14.051v5.9023h-6.0195v6.0195h-6.0195v36h6.0195v17.941h-6.0195v6.0195h24.078v-6.0195h47.922v-5.9023h12.039v-12.039h5.9023v-36h-5.9023v-6.0195h-6.0195v-5.9023zm47.934 29.988v5.9023h6.0195v-5.9023zm-17.945 0v5.9023h6.0195v-5.9023zm-17.945 5.9023h5.9023v-5.9023h-5.9023zm11.926 18.062h-6.0195v6.0195h-5.9023v5.9023h-12.039v-5.9023h6.0195v-6.0195h-6.0195v-6.0195h-6.0195v-36h6.0195v-6.0195h65.98v6.0195h6.0195v36h-6.0195v6.0195z" fill-rule="evenodd" />
+                        </svg>
+                    </button>
                     </div>
 
-                    {/* Compact input */}
-                    <div className="flex gap-3">
-                        <div className="flex-1 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-3 shadow-xl hover:bg-white/15 transition-all duration-300">
+                    {/* Tab Bar */}
+                    <div className="flex mb-0">
+                        {/*
+                        
+                        <button
+                            className={`${activeTab === 'General' ? 'surface-secondary  border-inset text-surface-light' : 'surface-raised  border-outset'} px-4 py-1 retro-font border-r-0`}
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('General')}
+                        >
+                            General
+                        </button>
+                        <button
+                            className={`${activeTab === 'Service' ? 'surface-secondary border-inset text-surface-light' : ' surface-raised  border-outset'} px-4 py-1 retro-font border-r-0`}
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('Service')}
+                        >
+                            Service
+                        </button>
+                        <button
+                            className="surface-raised border-outset w-8 h-8 flex items-center justify-center retro-font hover:surface-hover"
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('⚙️')}
+                        >
+                            ⚙️
+                        </button>
+                        <div className="flex-1"></div>
+                        */
+                        }
+                    </div>
+
+                    {/* Chat Messages Area */}
+                    <div className="h-32 p-2 overflow-y-auto retro-font bg-[#121313]/80 backdrop-blur-sm">
+                        {messages.map((message, index) => (
+                            <div key={index} className={message.type}>
+                                {message.text}
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Bottom Input Area */}
+                    <div className=" mt-0 p-2 bg-gradient-to-r from-[#242525] to-neutral-900 flex items-center gap-2">
+
+                        <div className="relative flex-1">
                             <input
                                 type="text"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Message"
+                                className="w-full relative bg-gradient-to-b from-neutral-800 to-neutral-900 border-2 border-black px-3 py-1 
+                   shadow-[2px_2px_0px_0px_#000000] focus:shadow-[1px_1px_0px_0px_#000000]
+                   transition-all duration-75 retro-font text-neutral-100 outline-none placeholder-neutral-400"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
                                 onKeyPress={handleKeyPress}
-                                placeholder="Say something..."
-                                className="w-full bg-transparent text-white placeholder-gray-300 text-sm outline-none"
                             />
+                            {/* Top highlight for 3D effect */}
+                            <div className="absolute top-0 left-0 right-0 h-1 bg-white opacity-30 pointer-events-none"></div>
+                            {/* Left highlight for 3D effect */}
+                            <div className="absolute top-0 left-0 bottom-0 w-1 bg-white opacity-20 pointer-events-none"></div>
+                            {/* Bottom shadow for 3D effect */}
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black opacity-40 pointer-events-none"></div>
+                            {/* Right shadow for 3D effect */}
+                            <div className="absolute top-0 right-0 bottom-0 w-1 bg-black opacity-30 pointer-events-none"></div>
                         </div>
+
+                        {
+                            /*
+                        <select className="font-pixel2P text-xs px-1 py-1">
+                            <option>Server 1</option>
+                        <input
+                            type="text"
+                            placeholder="Message"
+                            className="flex-1 px-3 py-1 retro-font text-neutral-100 outline-none border-4 border-[#121313]"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                        />
+                        </select>
+                            */
+                        }
+
+                        <SecondaryButton className="px-2 py-1">
+                            Send
+                        </SecondaryButton>
+                    </div>
+                </div>
+            ) : (
+
+                // implement the screen just like the compact chatbox theme, use the same colors that was used there. 
+
+                <div className="fixed z-20 inset-0 bottom-2 max-w-2xl max-h-40 bg-[#121313]/90 backdrop-blur-sm border-2 border-[#363737]">
+                    {/* Chat Header */}
+                    <div className="bg-gradient-to-r from-[#242525] to-neutral-900 border-b-2 border-[#363737] px-4 py-2 retro-font relative text-center text-neutral-100">
+                        <p className="font-pixel2P text-sm">
+                            CHAT
+                        </p>
                         <button
-                            onClick={() => setIsExpanded(true)}
-                            className="bg-white/15 backdrop-blur-xl border border-white/25 hover:bg-white/25 text-white p-3 rounded-xl shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
+                            className="absolute right-1 top-0.5 px-2 py-1 flex items-center justify-center retro-font text-white text-[10px] bg-[#9b4233] hover:bg-[#c25645] cursor-pointer"
+                            onClick={toggleExpanded}
                         >
-                            <MessageCircle size={20} />
+                            X
                         </button>
                     </div>
-                </div>
-            )}
 
-            {/* Expanded chatbox */}
-            {isExpanded && (
-                <div className="absolute inset-4 z-[60] flex items-center justify-center">
-                    <div className="w-full max-w-5xl h-full max-h-[700px] bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-                        {/* Header */}
-                        <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 p-5 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center shadow-lg border border-white/30">
-                                    <MessageCircle className="text-white" size={24} />
-                                </div>
-                                <h2 className="text-white font-bold text-xl">Chat</h2>
-                                <div className="flex items-center gap-2 text-gray-200 text-sm bg-white/10 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20">
-                                    <Users size={16} />
-                                    <span>1,247 online</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button className="text-gray-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
-                                    <Settings size={20} />
-                                </button>
-                                <button
-                                    onClick={() => setIsExpanded(false)}
-                                    className="text-gray-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10 flex items-center gap-2"
-                                    title="Minimize to bottom-left"
-                                >
-                                    <span className="text-sm font-medium">—</span>
-                                </button>
-                                <button
-                                    onClick={() => setIsExpanded(false)}
-                                    className="text-gray-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
-                                    title="Close chat"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
-                        </div>
+                    {/* Tab Bar */}
+                    <div className="flex bg-[#242525]/80 border-b border-[#363737]">
+                        <button
+                            className={`${activeTab === 'General'
+                                ? 'bg-[#404140] text-neutral-100 border-[#78b0bb]'
+                                : 'bg-[#121313]/60 text-neutral-400 border-[#363737]'} 
+                                px-4 py-1 retro-font border-r border-[#363737] hover:bg-[#404140] hover:text-neutral-100`}
+                            onClick={() => handleTabClick('General')}
+                        >
+                            General
+                        </button>
+                        <button
+                            className={`${activeTab === 'Service'
+                                ? 'bg-[#404140] text-neutral-100 border-[#78b0bb]'
+                                : 'bg-[#121313]/60 text-neutral-400 border-[#363737]'} 
+                                px-4 py-1 retro-font border-r border-[#363737] hover:bg-[#404140] hover:text-neutral-100`}
+                            onClick={() => handleTabClick('Service')}
+                        >
+                            Service
+                        </button>
+                        <button
+                            className="bg-[#121313]/60 hover:bg-[#404140] w-8 h-8 flex items-center justify-center retro-font text-neutral-400 hover:text-neutral-100 border-r border-[#363737]"
+                            onClick={() => handleTabClick('⚙️')}
+                        >
+                            ⚙️
+                        </button>
+                        <div className="flex-1"></div>
+                    </div>
 
-                        <div className="flex flex-1 overflow-hidden">
-                            {/* Channel sidebar */}
-                            <div className="w-52 bg-white/5 backdrop-blur-xl border-r border-white/20 p-5">
-                                <h3 className="text-gray-200 font-semibold mb-4 text-sm uppercase tracking-wider">Channels</h3>
-                                <div className="space-y-3">
-                                    {channels.map((channel) => {
-                                        const IconComponent = channel.icon;
-                                        return (
-                                            <button
-                                                key={channel.name}
-                                                onClick={() => setSelectedChannel(channel.name)}
-                                                className={`w-full text-left px-4 py-4 rounded-2xl transition-all duration-300 flex items-center gap-3 font-medium border ${selectedChannel === channel.name
-                                                    ? 'bg-white/20 backdrop-blur-xl text-white border-white/30 shadow-lg transform scale-105'
-                                                    : 'text-gray-300 hover:bg-white/10 hover:text-white border-white/10 hover:border-white/20'
-                                                    }`}
-                                            >
-                                                <IconComponent size={18} className={channel.color} />
-                                                {channel.name}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
+                    {/* Expanded Chat Messages Area */}
+                    <div className="bg-[#121313]/80 backdrop-blur-sm p-3 overflow-y-auto retro-font text-neutral-100"
+                        style={{ height: 'calc(100vh - 120px)' }}>
+                        {messages.map((message, index) => (
+                            <div key={index} className={message.type}>
+                                {message.text}
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Expanded Bottom Input Area */}
+                    <div className="bg-gradient-to-r from-[#242525] to-neutral-900 border-t-2 border-[#363737] p-2">
+                        <div className="flex items-center gap-2">
+                            <select className="bg-[#404140] border-2 border-[#363737] retro-font px-2 py-1 text-neutral-100 w-24">
+                                <option>Zone (51)</option>
+                            </select>
+                            <div className="relative flex-1">
+                                <input
+                                    type="text"
+                                    placeholder="Message"
+                                    className="w-full relative bg-gradient-to-b from-neutral-800 to-neutral-900 border-2 border-black px-3 py-1 
+                   shadow-[2px_2px_0px_0px_#000000] focus:shadow-[1px_1px_0px_0px_#000000]
+                   transition-all duration-75 retro-font text-neutral-100 outline-none placeholder-neutral-400"
+                                    value={inputMessage}
+                                    onChange={(e) => setInputMessage(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                />
+                                {/* Top highlight for 3D effect */}
+                                <div className="absolute top-0 left-0 right-0 h-1 bg-white opacity-30 pointer-events-none"></div>
+                                {/* Left highlight for 3D effect */}
+                                <div className="absolute top-0 left-0 bottom-0 w-1 bg-white opacity-20 pointer-events-none"></div>
+                                {/* Bottom shadow for 3D effect */}
+                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black opacity-40 pointer-events-none"></div>
+                                {/* Right shadow for 3D effect */}
+                                <div className="absolute top-0 right-0 bottom-0 w-1 bg-black opacity-30 pointer-events-none"></div>
                             </div>
 
-                            {/* Main chat area */}
-                            <div className="flex-1 flex flex-col">
-                                {/* Messages */}
-                                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white/5 backdrop-blur-sm">
-                                    {messages.map((msg) => (
-                                        <div key={msg.id} className="flex items-start gap-4">
-                                            <span className="text-xs text-gray-400 w-12 flex-shrink-0 mt-2">{msg.timestamp}</span>
-                                            {msg.type === 'system' ? (
-                                                <div className="bg-yellow-500/20 backdrop-blur-xl border border-yellow-400/30 rounded-2xl p-4 flex-1 shadow-lg">
-                                                    <div className="text-yellow-300 text-sm font-medium flex items-start gap-2">
-                                                        ⚠️ <span>{msg.text}</span>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 flex-1 hover:bg-white/15 hover:border-white/30 transition-all duration-300 shadow-lg">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <span className="text-xl">{msg.level}</span>
-                                                        <span className="text-orange-400 font-bold text-sm">{msg.user}</span>
-                                                    </div>
-                                                    <div className="text-white text-sm leading-relaxed">{msg.text}</div>
-                                                    {msg.subtext && (
-                                                        <div className="text-gray-300 text-xs mt-2 italic opacity-80">{msg.subtext}</div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <div ref={messagesEndRef} />
-                                </div>
+                            {/*
+                           
+                            <input
+                                type="text"
+                                placeholder="Message"
+                                className="flex-1 px-3 py-1 retro-font text-neutral-100 outline-none border-2 border-[#363737] bg-[#121313]/80 backdrop-blur-sm placeholder-neutral-400"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                            />
+                            */
+                            }
 
-                                {/* Input area */}
-                                <div className="p-5 bg-white/10 backdrop-blur-xl border-t border-white/20">
-                                    <div className="flex gap-4">
-                                        <div className="flex-1 relative">
-                                            <input
-                                                type="text"
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                onKeyPress={handleKeyPress}
-                                                placeholder={`Message ${selectedChannel}...`}
-                                                className="w-full bg-white/10 backdrop-blur-xl border border-white/25 rounded-2xl px-5 py-4 text-white placeholder-gray-300 outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-300 shadow-lg"
-                                            />
-                                        </div>
-                                        <button
-                                            onClick={handleSendMessage}
-                                            className="bg-white/15 backdrop-blur-xl hover:bg-white/25 text-white px-8 py-4 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl flex items-center gap-3 font-semibold border border-white/25 hover:border-white/40"
-                                        >
-                                            <Send size={18} />
-                                            Send
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <SecondaryButton className="px-2 py-1">
+                                Send
+                            </SecondaryButton>
                         </div>
                     </div>
                 </div>
             )}
 
-            <style >{`
-      `}</style>
+
         </>
     );
 };
 
-export default GameChatbox;
+
+/*
+   // Expanded Full-Screen Chat
+                <div className="fixed z-[20] inset-4 max-w-2xl max-h-80 surface-primary">
+                    {/* Chat Header 
+
+                    <div className="surface-raised border-b-2 border-solid border-brown-700 px-4 py-2 retro-font relative text-center">
+                        CHAT
+                        <button
+                            className="absolute right-1 top-0.5 w-5 h-5 flex items-center justify-center retro-font text-white text-[10px] hover:bg-red-600 active:bg-red-700"
+                            style={{ background: '#dc2626', border: '2px outset #d32f2f' }}
+                            onClick={toggleExpanded}
+                        >
+                            X
+                        </button>
+                    </div>
+
+                    <div className="flex">
+                        <button
+                            className={`${activeTab === 'General' ? 'surface-raised border-outset' : 'surface-secondary border-inset text-surface-light'} px-4 py-1 retro-font border-r-0`}
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('General')}
+                        >
+                            General
+                        </button>
+                        <button
+                            className={`${activeTab === 'Service' ? 'surface-raised border-outset' : 'surface-secondary border-inset text-surface-light'} px-4 py-1 retro-font border-r-0`}
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('Service')}
+                        >
+                            Service
+                        </button>
+                        <button
+                            className="surface-raised border-outset w-8 h-8 flex items-center justify-center retro-font hover:surface-hover"
+                            style={{ borderBottom: 'none' }}
+                            onClick={() => handleTabClick('⚙️')}
+                        >
+                            ⚙️
+                        </button>
+                        <div className="flex-1"></div>
+                    </div>
+
+                    <div className="status-bg border-inset p-3 overflow-y-auto retro-font text-surface-light"
+                        style={{ height: 'calc(100vh - 120px)' }}>
+                        {messages.map((message, index) => (
+                            <div key={index} className={message.type}>
+                                {message.text}
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    <div className="surface-raised border-t-2 border-solid border-brown-700 p-1">
+                        <div className="flex items-center gap-2">
+                            <select className="surface-raised border-inset retro-font px-2 py-1 text-surface w-24">
+                                <option>Zone (51)</option>
+                            </select>
+                            <input
+                                type="text"
+                                placeholder="Message"
+                                className="surface-raised border-inset flex-1 px-3 py-1 retro-font text-surface"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                            />
+                            <button
+                                className="surface-raised border-outset px-4 py-1 retro-font hover:surface-hover active:surface-active"
+                                onClick={handleSendMessage}
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+*/

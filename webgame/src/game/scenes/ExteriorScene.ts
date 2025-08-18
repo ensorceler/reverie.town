@@ -1,10 +1,12 @@
+
 import { Portal, SceneInitData, SpawnPoint } from "@/@types/game/scene";
 import { Player } from "../player/Player";
 import { getCustomPropertyFromTiledObject } from "../utils/tiled";
+import { DEPTH } from "../constants/depth-managment";
 
 
 
-export class InteriorScene extends Phaser.Scene {
+export class ExteriorScene extends Phaser.Scene {
     player: Player;
     cursors: Phaser.Types.Input.Keyboard.CursorKeys;
     zoomLevel: number = 1;
@@ -16,14 +18,15 @@ export class InteriorScene extends Phaser.Scene {
     portals: Portal[] = [];
 
     constructor() {
-        super('interior_scene');
+        // scene_key -> exterior_scene
+        super('exterior_scene');
     }
 
     init(data: SceneInitData) {
         this.initData = data;
         this.mapKey = data.mapKey;
         this.spawnKey = data.spawnKey || "entry_spawn";
-        console.log('InteriorScene initialized with:', data);
+        console.log('ExteriorScene initialized with:', data);
     }
 
     preload() {
@@ -54,12 +57,27 @@ export class InteriorScene extends Phaser.Scene {
         this.player = new Player(this, 100, 100, "Player");
         this.player.createPlayer();
 
+        let flag = false;
         this.spawnPoints.forEach((spawnPoint: SpawnPoint) => {
-            if (spawnPoint.name === this.spawnKey) {
-                console.log("found spawn position for player", spawnPoint)
+            //console.log("found spawn position for player", spawnPoint)
+            if (this.spawnKey === spawnPoint.name) {
                 this.player.updatePlayerPosition(spawnPoint.x, spawnPoint.y)
+                flag = true;
+                return;
             }
         })
+        // just a hack okay, not good
+        if (!flag) {
+            this.spawnPoints.forEach((spawnPoint: SpawnPoint) => {
+                //console.log("found spawn position for player", spawnPoint)
+                if (spawnPoint.name === "") {
+                    this.player.updatePlayerPosition(spawnPoint.x, spawnPoint.y)
+                    return;
+                }
+            })
+        }
+
+
 
     }
 
@@ -75,30 +93,12 @@ export class InteriorScene extends Phaser.Scene {
         const map = this.map;
         // Add all tilesets to the map
         const tilesets: any = [
-            map.addTilesetImage('1_Generic_Shadowless32x32', '1_Generic_Shadowless32x32'),
-            map.addTilesetImage('2_LivingRoom_Shadowless_32x32', '2_LivingRoom_Shadowless_32x32'),
-            map.addTilesetImage('3_Bathroom_Shadowless_32x32', '3_Bathroom_Shadowless_32x32'),
-            map.addTilesetImage('4_Bedroom_Shadowless_32x32', '4_Bedroom_Shadowless_32x32'),
-            map.addTilesetImage('5_Classroom_and_library_Shadowless_32x32', '5_Classroom_and_library_Shadowless_32x32'),
-            map.addTilesetImage('Room_Builder_32x32', 'Room_Builder_32x32'),
-            map.addTilesetImage('animated_door_bathroom_32x32', 'animated_door_bathroom_32x32'),
-            map.addTilesetImage('animated_door_glass_sliding_32x32', 'animated_door_glass_sliding_32x32'),
-            map.addTilesetImage('14_Basement_Shadowless_32x32', '14_Basement_Shadowless_32x32'),
-            map.addTilesetImage('13_Conference_Hall_Shadowless_32x32', '13_Conference_Hall_Shadowless_32x32'),
-            map.addTilesetImage('6_Music_and_sport_Shadowless_32x32', '6_Music_and_sport_Shadowless_32x32'),
-            map.addTilesetImage('12_Kitchen_Shadowless_32x32', '12_Kitchen_Shadowless_32x32'),
-            map.addTilesetImage('animated_door_vertical_right_1_32x32', 'animated_door_vertical_right_1_32x32')
+            map.addTilesetImage('1_Terrains_and_Fences_32x32', '1_Terrains_and_Fences_32x32'),
+            map.addTilesetImage('2_City_Terrains_32x32', '2_City_Terrains_32x32'),
+            map.addTilesetImage('4_Generic_Buildings_32x32', '4_Generic_Buildings_32x32'),
+            map.addTilesetImage('7_Villas_32x32', '7_Villas_32x32'),
+            map.addTilesetImage('17_Garden_32x32', '17_Garden_32x32'),
         ];
-
-        /*
-        const tileset = map.addTilesetImage('1_Generic_Shadowless32x32', '1_Generic_Shadowless32x32');
-
-        if (!tileset) {
-            console.error('Failed to add tileset!');
-            this.add.text(10, 10, 'TILESET FAILED', { fontSize: '32px', color: '#ff0000' });
-            return;
-        }
-            */
 
         // Method 1: Get all layers from the tilemap
         const allLayers = map.layers;
@@ -115,6 +115,11 @@ export class InteriorScene extends Phaser.Scene {
             if (layer) {
                 layerObjects.push(layer);
             }
+            if (getCustomPropertyFromTiledObject(layerData, "above_player")) {
+                layer?.setDepth(DEPTH.FOREGROUND_LAYER_DEPTH);
+            } else {
+                layer?.setDepth(DEPTH.LAYER_DEPTH);
+            }
         }
 
     }
@@ -127,7 +132,7 @@ export class InteriorScene extends Phaser.Scene {
 
         collisionLayer?.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
 
-            if (obj.type === "wall" || obj.type === "furniture") {
+            if (obj.type === "wall" || obj.type === "obstruction") {
 
                 let wall = null;
                 const centerX = obj.x! + (obj.width || 0) / 2;
@@ -142,6 +147,7 @@ export class InteriorScene extends Phaser.Scene {
                     });
                 } else if (obj.polygon) {
                     // Handle polygon objects
+                    /*
                     function getVertices(items: Phaser.Types.Math.Vector2Like[]) {
                         return items.reduce((accumulator, item, index) => {
                             return `${accumulator}${item.x} ${item.y} `;
@@ -160,7 +166,7 @@ export class InteriorScene extends Phaser.Scene {
 
                     gameObject.setPosition(polygon2.x + body.centerOffset.x, polygon2.y + body.centerOffset.y);
                     console.log('gameObject polygon## : {{}} =>', (gameObject));
-
+                        */
                 } else if (obj.rectangle) {
                     // Default: create rectangle collision body
                     wall = this.matter.add.rectangle(
@@ -183,7 +189,15 @@ export class InteriorScene extends Phaser.Scene {
     setupMapZoomControls() {
 
         this.cursors = this.input.keyboard!.createCursorKeys();
+        // Calculate zoom to ensure minimum coverage
+
+        //this.cameras.main.setZoom(minZoom);
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+
+        //this.cameras.main.roundPixels = true;
         // Listen for mouse wheel events
+        /*
         this.input.on('wheel', (pointer: Phaser.Input.Pointer, gameObjects: any[], deltaX: number, deltaY: number, deltaZ: number) => {
             // deltaY > 0 = scroll down (zoom out)
             // deltaY < 0 = scroll up (zoom in)
@@ -203,6 +217,7 @@ export class InteriorScene extends Phaser.Scene {
 
             console.log(`Zoom level: ${this.zoomLevel.toFixed(2)}x`);
         });
+        */
     }
 
     setupZoneObjects() {
@@ -237,10 +252,16 @@ export class InteriorScene extends Phaser.Scene {
             }
 
             if (obj.type === "spawn") {
-                const centerX = obj.x! + (obj.width || 0) / 2;
-                const centerY = obj.y! + (obj.height || 0) / 2;
-
-                this.spawnPoints.push({ x: centerX, y: centerY, name: obj.name });
+                let X = 0;
+                let Y = 0;
+                X = obj.x! + (obj.width || 0) / 2;
+                Y = obj.y! + (obj.height || 0) / 2;
+                // spawn can be rectangle or point 
+                if (obj.rectangle) {
+                }
+                if (obj.point) {
+                }
+                this.spawnPoints.push({ x: X, y: Y, name: obj.name });
             }
 
             if (obj.type === "portal") {
@@ -266,8 +287,8 @@ export class InteriorScene extends Phaser.Scene {
                     name: obj.name,
                     class: obj.type,
                     targetScene: getCustomPropertyFromTiledObject(obj, "target_scene"),
-                    targetSpawn: getCustomPropertyFromTiledObject(obj, "target_spawn"),
                     targetMap: getCustomPropertyFromTiledObject(obj, "target_map"),
+                    targetSpawn: getCustomPropertyFromTiledObject(obj, "target_spawn"),
                     direction: getCustomPropertyFromTiledObject(obj, "direction"),
                 }
                 // @ts-ignore

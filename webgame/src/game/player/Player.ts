@@ -1,12 +1,8 @@
 import { Scene, Input } from "phaser";
 import { PhaserEventBus } from "../events/PhaserEventBus";
 import { PlayerState } from "@/@types/websocket";
+import { DEPTH } from "../constants/depth-managment";
 
-const COLLISION_CATEGORIES = {
-    PLAYER: 1,
-    WALL: 2,
-    ENEMY: 3,
-}
 
 export class Player {
     scene: Scene;
@@ -99,6 +95,7 @@ export class Player {
         });
 
         console.log('All animations loaded successfully!');
+
         this.playerObj = this.scene.matter.add.sprite(100, 100, 'playerIdle', 4, {
             shape: {
                 type: "rectangle",
@@ -107,6 +104,7 @@ export class Player {
             },
             label: "player_" + this.playerName
         });
+        this.playerObj.setDepth(DEPTH.PLAYER_DEPTH);
 
         this.playerNameTag = this.scene.add.text(this.playerObj.x - 16, this.playerObj.y - 32, this.playerName, {
             fontSize: '12px',
@@ -114,16 +112,10 @@ export class Player {
             fontFamily: 'Arial',
             align: 'center',
             strokeThickness: 0.75,
-        }).setDepth(1001);
+        }).setDepth(DEPTH.PLAYER_NAME_TAG_DEPTH);
 
 
-        this.playerObj.setCollisionCategory(COLLISION_CATEGORIES.PLAYER);
-        this.playerObj.setCollidesWith([
-            COLLISION_CATEGORIES.WALL,
-            COLLISION_CATEGORIES.ENEMY
-        ]);
 
-        this.playerObj.setDepth(1000);
         this.scene.cameras.main.startFollow(this.playerObj);
         this.playerObj.setAngularVelocity(0);
         this.playerObj.setFixedRotation(); // Prevents any rotation

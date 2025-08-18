@@ -19,6 +19,8 @@ export interface Portal {
     name: string;
     class?: string;
     direction?: string;
+    targetMap: string;
+    // targetScene represents the mapKey
     targetScene: string;
     targetSpawn: string;
 }

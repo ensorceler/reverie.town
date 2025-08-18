@@ -31,7 +31,7 @@
     "rectangle": true
 }
 */
-export function getCustomPropertyFromTiledObject(obj: Phaser.Types.Tilemaps.TiledObject, propertyName: string, defaultValue: any = null) {
+export function getCustomPropertyFromTiledObject(obj: Phaser.Types.Tilemaps.TiledObject | Phaser.Types.Tilemaps.LayerDataConfig, propertyName: string, defaultValue: any = null) {
     const property = obj.properties?.find((prop: any) => prop.name === propertyName);
     return property ? property.value : defaultValue;
 }
